@@ -10,7 +10,6 @@ from pathlib import Path
 filepaths = glob.glob("invoices/*.xlsx")
 
 for filepath in filepaths:
-    df = pd.read_excel(filepath, sheet_name="Sheet 1")
     #print(df)
     # Create 1 PDF Document per excel file
     pdf = FPDF(orientation="P", unit="mm", format="A4") # 'P' stands for Portrait, 'L' for Landscape
@@ -22,16 +21,55 @@ for filepath in filepaths:
     pdf.cell(w=50, h=8, text=f"Invoice #: {invoice_num}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
     pdf.cell(w=50, h=8, text=f"Date: {invoice_date}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
-    for index, row in df.iterrows():
-        #print(index)
-        #print(row)
-        #print(df.shape)
-        # Define the number of rows and columns
-        rows_per_page = int(index) + 1
-        cols_per_page = len(df.columns)
-        pdf.set_font(family="Times", size=12, style="")
-        #pdf.cell(w=0, h=12, text=row["product_id"], align="L", ln=1, border=0)
 
+    df = pd.read_excel(filepath, sheet_name="Sheet 1")
+
+    # Add your headers
+    columns = df.columns
+    columns = [item.replace("_", " ").title() for item in columns]
+    pdf.set_font(family="Times", size=10, style="B")
+    pdf.set_text_color(80, 80, 80)
+    pdf.cell(w=30, h=8, text=str(columns[0]), border=1)
+    pdf.cell(w=70, h=8, text=str(columns[1]), border=1)
+    pdf.cell(w=32, h=8, text=str(columns[2]), border=1)
+    pdf.cell(w=30, h=8, text=str(columns[3]), border=1)
+    pdf.cell(w=30, h=8, text=str(columns[4]), border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    # Add rows to table.
+    for index, row in df.iterrows():
+        pdf.set_font(family="Times", size=10)
+        pdf.set_text_color(80, 80, 80)
+        pdf.cell(w=30, h=8, text=str(row["product_id"]), border=1)
+        pdf.cell(w=70, h=8, text=str(row["product_name"]), border=1)
+        pdf.cell(w=32, h=8, text=str(row["amount_purchased"]), border=1)
+        pdf.cell(w=30, h=8, text=str(row["price_per_unit"]), border=1)
+        pdf.cell(w=30, h=8, text=str(row["total_price"]), border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    total_sum = df["total_price"].sum()
+
+    pdf.set_font(family="Times", size=10)
+    pdf.set_text_color(80, 80, 80)
+    pdf.cell(w=30, h=8, text="", border=1)
+    pdf.cell(w=70, h=8, text="", border=1)
+    pdf.cell(w=32, h=8, text="", border=1)
+    pdf.cell(w=30, h=8, text="", border=1)
+    pdf.cell(w=30, h=8, text=f"${str(total_sum)}", border=1, new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    pdf.ln(10)
+
+    # Add total sum information
+    pdf.set_font(family="Times", size=14, style="B")
+    pdf.cell(w=0, h=8, text=f"The total due is ${str(total_sum)}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
+
+    # Add Company Name & Logo
+    pdf.set_font(family="Times", size=14, style="B")
+    pdf.cell(w=88, h=8, text=f"Pay to the order of: SuperAwesomeTeam")
+    pdf.image("pythonhow.png", w=10)
+
+    # Thank them!
+    pdf.ln(50)
+    pdf.set_font(family="Times", size=18, style="B")
+    pdf.cell(w=0, h=8, text=f"                                               Thank you so much for your business!", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
 
 
     pdf.output(f"PDFs/{filename}.pdf")
