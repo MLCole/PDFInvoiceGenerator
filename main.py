@@ -64,12 +64,15 @@ for filepath in filepaths:
     # Add Company Name & Logo
     pdf.set_font(family="Times", size=14, style="B")
     pdf.cell(w=88, h=8, text=f"Pay to the order of: SuperAwesomeTeam")
-    pdf.image("pythonhow.png", w=10)
+    pdf.image("minimal_x.png", w=10)
 
     # Thank them!
     pdf.ln(50)
     pdf.set_font(family="Times", size=18, style="B")
     pdf.cell(w=0, h=8, text=f"                                               Thank you so much for your business!", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
-
+    pdf.ln(90)
+    pdf.image("Green_Recycle_Symbol.png", w=30)
+    pdf.set_font(family="Times", size=14, style="B")
+    pdf.cell(w=88, h=8, text=f"Don't forget to Recycle!")
 
     pdf.output(f"PDFs/{filename}.pdf")
