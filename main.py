@@ -57,6 +57,7 @@ for filepath in filepaths:
 
     pdf.ln(10)
 
+
     # Add total sum information
     pdf.set_font(family="Times", size=14, style="B")
     pdf.cell(w=0, h=8, text=f"The total due is ${str(total_sum)}", new_x=XPos.LMARGIN, new_y=YPos.NEXT)
